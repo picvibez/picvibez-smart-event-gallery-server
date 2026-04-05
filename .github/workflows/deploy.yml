@@ -19,7 +19,25 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build Image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/pics-server .
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/pics-server:latest .
 
       - name: Push Image
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/pics-server
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/pics-server:latest
+
+      # 🔥 ADD THIS BLOCK (EC2 DEPLOY)
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/pics-server:latest
+
+            docker stop pics-server || true
+            docker rm pics-server || true
+
+            docker run -d \
+              -p 80:3000 \
+              --name pics-server \
+              ${{ secrets.DOCKER_USERNAME }}/pics-server:latest
