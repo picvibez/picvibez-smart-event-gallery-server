@@ -38,6 +38,7 @@ jobs:
             docker rm pics-server || true
 
             docker run -d \
-              -p 80:3000 \
+              -p 80:10000 \
               --name pics-server \
+              --restart always \
               ${{ secrets.DOCKER_USERNAME }}/pics-server:latest
