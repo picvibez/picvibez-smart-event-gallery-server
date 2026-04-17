@@ -1,4 +1,35 @@
 __pycache__/
-.env
-venv/
 *.pyc
+*.pyo
+*.pyd
+.env
+.env.*
+!.env.example
+venv/
+.venv/
+*.egg-info/
+dist/
+build/
+
+# Security - never commit keys
+*.pem
+*.key
+*.p12
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Logs
+*.log

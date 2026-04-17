@@ -1,132 +1,84 @@
-# 🚀 FastAPI Starter Project
+# PicVibez Smart Event Gallery - Backend API
 
-A simple FastAPI project with a virtual environment setup and basic API endpoints.
+Production-grade FastAPI backend for PicVibez, a smart event photo gallery with AI-powered face recognition, semantic search, and real-time collaboration.
 
----
+## Architecture
 
-## 📦 Requirements
+- **FastAPI** on **AWS EC2** -- API orchestrator
+- **Supabase** -- Auth, PostgreSQL (RLS), Realtime
+- **AWS S3 + CloudFront** -- Media storage and CDN delivery
+- **AWS Lambda + SQS** -- Async image processing pipeline
+- **AWS Rekognition** -- Face detection and clustering
+- **Google Gemini** -- Semantic photo labeling
+- **Stripe** -- Payment processing
 
-* Python 3.8+
-* pip (Python package manager)
-
----
-
-## ⚙️ Setup Instructions
-
-### 1️⃣ Clone or Create Project Folder
-
-```bash
-mkdir fastapi-project
-cd fastapi-project
-```
-
----
-
-### 2️⃣ Create Virtual Environment
+## Quick Start
 
 ```bash
+# 1. Clone and enter
+cd picvibez-smart-event-gallery-server
+
+# 2. Create virtual environment
 python -m venv venv
+source venv/bin/activate  # macOS/Linux
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Configure environment
+cp .env.example .env
+# Edit .env with your credentials
+
+# 5. Run dev server
+uvicorn app.main:app --reload --port 10000
 ```
 
----
-
-### 3️⃣ Activate Virtual Environment
-
-#### 🪟 Windows:
+## Docker
 
 ```bash
-venv\Scripts\activate
+# Development (with hot-reload)
+docker-compose up
+
+# Production build
+docker build -t picvibez-server .
+docker run -p 80:10000 --env-file .env picvibez-server
 ```
 
-#### 🍎 Mac/Linux:
+## API Documentation
+
+Once running, visit:
+- Swagger UI: http://localhost:10000/docs
+- ReDoc: http://localhost:10000/redoc
+
+## Database Migrations
+
+SQL migrations are in `supabase/migrations/`. Run them in order against your Supabase project:
 
 ```bash
-source venv/bin/activate
+# Using Supabase CLI
+supabase db push
 ```
 
----
-
-### 4️⃣ Install Dependencies
+## Testing
 
 ```bash
-pip install fastapi uvicorn
+pip install pytest httpx
+pytest tests/ -v
 ```
 
----
-
-### 5️⃣ Create Main File
-
-Create a file named `main.py` and add:
-
-```python
-from fastapi import FastAPI
-
-app = FastAPI()
-
-@app.get("/")
-def home():
-    return {"message": "Hello FastAPI 🚀"}
-
-@app.get("/add")
-def add(a: int, b: int):
-    return {"result": a + b}
-```
-
----
-
-### 6️⃣ Run the Server
-
-```bash
-python -m uvicorn main:app --reload
-```
-
----
-
-## 🌐 API Endpoints
-
-| Endpoint       | Description     |
-| -------------- | --------------- |
-| `/`            | Home route      |
-| `/add?a=1&b=2` | Add two numbers |
-
----
-
-## 📘 Interactive Docs
-
-Once the server is running, open:
-
-* Swagger UI: http://127.0.0.1:8000/docs
-* ReDoc: http://127.0.0.1:8000/redoc
-
----
-
-## 🧠 Project Structure
+## Project Structure
 
 ```
-fastapi-project/
-│
-├── venv/          # Virtual environment
-├── main.py        # Main application
-└── README.md      # Project documentation
+app/
+  main.py              # FastAPI app, middleware, routes
+  core/                # Config, security, dependency injection
+  api/v1/              # Route modules (12 modules)
+  models/              # Pydantic schemas and enums
+  services/            # Business logic layer
+  integrations/        # External service clients
+  middleware/           # Rate limiting
+lambdas/               # AWS Lambda handlers
+edge_functions/        # Supabase Edge Functions
+supabase/migrations/   # PostgreSQL schema + RLS + triggers
+tests/                 # Pytest test suite
 ```
-
----
-
-## 🛑 Deactivate Virtual Environment
-
-```bash
-deactivate
-```
-
----
-
-## 💡 Notes
-
-* Always use a virtual environment for projects
-* Use `requirements.txt` for managing dependencies
-
----
-
-## 📄 License
-
-This project is for learning purposes.
